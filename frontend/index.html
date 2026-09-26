@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BurguerSync Ourinhos | Delivery Express & KDS Cozinha</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="BurguerSync Ourinhos - Hamburgueria artesanal de alta performance com autosserviço para clientes e esteira KDS em tempo real para a cozinha.">
+  <meta name="theme-color" content="#0C0C0E">
+
+  <!-- Google Fonts: Space Grotesk + Inter + Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- CSS Principal -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ================= HEADER PRINCIPAL ================= -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand" id="brandHomeBtn">
+        <span class="brand-badge">Ourinhos</span>
+        <h1 class="brand-title">Burguer<span>Sync</span></h1>
+      </div>
+
+      <nav class="mode-navigation">
+        <button id="btnModoCliente" class="nav-btn active" type="button">🛍️ Cliente</button>
+        <button id="btnModoRotas" class="nav-btn" type="button">🗺️ Rotas</button>
+        <button id="btnModoCozinha" class="nav-btn" type="button">👨‍🍳 Cozinha <span id="cozinhaContador" class="badge-counter">0</span></button>
+      </nav>
+
+      <button id="btnAbrirCarrinho" class="cart-floating-trigger" aria-label="Ver Carrinho">
+        🛒 <span class="cart-trigger-label">Carrinho</span>
+        <span id="carrinhoQtdTotal" class="badge-neon">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= VISÃO 1: CLIENTE (AUTOSSERVIÇO & CARDÁPIO) ================= -->
+  <main id="visaoCliente" class="main-content">
+    
+    <!-- Banner Rápido Rotas -->
+    <div class="quick-route-banner">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span class="route-badge-live"><span class="pulse-dot"></span> GPS Ativo</span>
+        <span style="color: var(--text-primary); font-size: 0.88rem;">Entrega rápida em <strong>todos os bairros de Ourinhos</strong> a partir de <strong>R$ 5,00</strong></span>
+      </div>
+      <button type="button" class="btn-quick-routes" id="btnBannerRotas">
+        🛵 Ver Rotas & Bairros Atendidos ➔
+      </button>
+    </div>
+
+    <!-- Hero / Boas-vindas -->
+    <section class="banner-hero">
+      <div class="banner-content">
+        <h2>O Smash Mais Quente de Ourinhos</h2>
+        <p>Pão brioche selado na chapa com manteiga, blend artesanal suculento e entrega express em toda a cidade de Ourinhos e região.</p>
+      </div>
+    </section>
+
+    <!-- Vitrine de Lanches & Filtros -->
+    <section class="catalogo-section">
+      <div class="section-title-wrap">
+        <h2>Cardápio de Lanches & Porções</h2>
+      </div>
+
+      <div class="category-filters-wrap">
+        <button type="button" class="filter-pill active" data-cat="todos">🍔 Todos</button>
+        <button type="button" class="filter-pill" data-cat="smashes">🔥 Smashes</button>
+        <button type="button" class="filter-pill" data-cat="artesanais">🥩 Artesanais</button>
+        <button type="button" class="filter-pill" data-cat="porcoes">🍟 Porções</button>
+        <button type="button" class="filter-pill" data-cat="bebidas">🥤 Bebidas</button>
+        <button type="button" class="filter-pill" data-cat="sobremesas">🍦 Sobremesas</button>
+      </div>
+
+      <div id="gridLanches" class="products-grid">
+        <!-- Renderizado dinamicamente via client.js -->
+      </div>
+    </section>
+
+    <!-- Drawer / Gaveta do Carrinho -->
+    <aside id="carrinho" class="carrinho-drawer hidden" aria-label="Carrinho de Compras">
+      <div class="carrinho-header">
+        <h3>Seu Pedido</h3>
+        <button id="btnFecharCarrinho" class="btn-icon-close" aria-label="Fechar Carrinho">&times;</button>
+      </div>
+
+      <div id="listaItensCarrinho" class="carrinho-body">
+        <!-- Renderizado dinamicamente via client.js -->
+      </div>
+
+      <!-- Resumo de Valores -->
+      <div class="carrinho-resumo">
+        <div class="resumo-linha">
+          <span>Subtotal</span>
+          <span id="carrinhoSubtotal">R$ 0,00</span>
+        </div>
+        <div class="resumo-linha">
+          <span>Taxa de Entrega (Ourinhos)</span>
+          <span id="taxaEntrega">R$ 5,00</span>
+        </div>
+        <div class="resumo-linha total">
+          <span>Total Geral</span>
+          <span id="carrinhoTotal">R$ 0,00</span>
+        </div>
+      </div>
+
+      <!-- Formulário de Entrega e Checkout -->
+      <form id="formCheckout" class="checkout-form">
+        <h4>Dados para Entrega</h4>
+        
+        <div class="form-group">
+          <label for="nomeCliente">Nome Completo *</label>
+          <input type="text" id="nomeCliente" name="nomeCliente" required placeholder="Ex: Lucas Andrade">
+        </div>
+
+        <div class="form-group-row">
+          <div class="form-group flex-2">
+            <label for="telefoneCliente">WhatsApp/Celular *</label>
+            <input type="tel" id="telefoneCliente" name="telefoneCliente" required placeholder="(14) 99821-4433">
+          </div>
+          <div class="form-group flex-1">
+            <label for="numeroCasa">Nº *</label>
+            <input type="text" id="numeroCasa" name="numeroCasa" required placeholder="742">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="enderecoCliente">Rua / Logradouro *</label>
+          <input type="text" id="enderecoCliente" name="enderecoCliente" required placeholder="Ex: Rua Expedicionários">
+        </div>
+
+        <div class="form-group">
+          <label for="bairroCliente">Bairro em Ourinhos *</label>
+          <select id="bairroCliente" name="bairroCliente" required>
+            <!-- Populado dinamicamente -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="obsEntrega">Instruções para o Entregador</label>
+          <input type="text" id="obsEntrega" name="obsEntrega" placeholder="Apto 42, buzinar no portão...">
+        </div>
+
+        <h4>Forma de Pagamento</h4>
+        <div class="payment-tabs">
+          <label class="payment-option">
+            <input type="radio" name="tipoPagamento" value="pix" checked>
+            <div class="payment-card-badge">
+              <span class="icon">⚡</span>
+              <span>Pix</span>
+            </div>
+          </label>
+
+          <label class="payment-option">
+            <input type="radio" name="tipoPagamento" value="cartao">
+            <div class="payment-card-badge">
+              <span class="icon">💳</span>
+              <span>Cartão</span>
+            </div>
+          </label>
+
+          <label class="payment-option">
+            <input type="radio" name="tipoPagamento" value="dinheiro">
+            <div class="payment-card-badge">
+              <span class="icon">💵</span>
+              <span>Dinheiro</span>
+            </div>
+          </label>
+        </div>
+
+        <!-- Bloco Condicional de Troco -->
+        <div id="trocoContainer" class="form-group hidden">
+          <label for="valorTroco">Precisa de troco para quanto?</label>
+          <input type="text" id="valorTroco" name="valorTroco" placeholder="Ex: R$ 50,00 ou R$ 100,00">
+        </div>
+
+        <!-- Bloco Pix com Chave Oficial -->
+        <div id="pixContainer" class="pix-preview-box">
+          <div class="pix-badge">⚡ Chave Pix Oficial - BurguerSync Ourinhos</div>
+          <div class="pix-copiacola-wrap">
+            <input type="text" id="pixCodigoCopia" readonly value="00020126580014br.gov.bcb.pix0136burguersync-ourinhos-pix-key520400005303986540528.005802BR">
+            <button type="button" id="btnCopiarPix" class="btn-copy">Copiar</button>
+          </div>
+          <small style="color: var(--text-muted); font-size: 0.72rem;">Após a conclusão, a Cozinha receberá instantaneamente seu pedido via Firestore.</small>
+        </div>
+
+        <button type="submit" id="btnFinalizarPedido" class="btn-checkout-action">
+          🚀 Finalizar e Enviar para a Cozinha
+        </button>
+      </form>
+    </aside>
+  </main>
+
+  <!-- ================= VISÃO 2: ROTAS DE ENTREGA & MAPA ================= -->
+  <section id="visaoRotas" class="rotas-section hidden">
+    <div class="section-title-wrap">
+      <h2>Mapa de Atendimento & Rotas de Ourinhos</h2>
+      <p style="color: var(--text-secondary); font-size: 0.9rem;">Área de cobertura expressa, taxas logísticas por bairro e raio de entrega em Ourinhos - SP.</p>
+    </div>
+
+    <div class="rotas-grid-layout">
+      <div class="mapa-card-container">
+        <h3>📍 Localização e Raio de Atendimento</h3>
+        <div class="mapa-frame-wrap">
+          <iframe 
+            src="https://maps.google.com/maps?q=Ourinhos%20SP&t=&z=13&ie=UTF8&iwloc=&output=embed" 
+            title="Mapa de Ourinhos - Cobertura BurguerSync"
+            allowfullscreen 
+            loading="lazy">
+          </iframe>
+        </div>
+      </div>
+
+      <div class="bairros-list-container">
+        <h3>🛵 Bairros Atendidos e Taxas</h3>
+        <div id="bairrosListaContainer">
+          <!-- Populado dinamicamente via routes.js -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= VISÃO 3: COZINHA (KDS KANBAN EM TEMPO REAL) ================= -->
+  <section id="visaoCozinha" class="cozinha-dashboard hidden">
+    <div class="cozinha-header-status">
+      <div>
+        <h2>👨‍🍳 Painel KDS da Cozinha</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Esteira em tempo real sincronizada via Firebase Cloud Firestore.</p>
+      </div>
+      <div class="filtro-pedidos">
+        <span class="status-summary">Pedidos Ativos na Esteira: <strong id="totalPedidosAtivos">0</strong></span>
+      </div>
+    </div>
+
+    <div id="listaPedidos" class="pedidos-kanban-grid">
+      <!-- Cards renderizados dinamicamente pelo listener onSnapshot do kitchen.js -->
+    </div>
+  </section>
+
+  <!-- Overlay de Backdrop para Fechar o Carrinho -->
+  <div id="backdropCarrinho" class="carrinho-overlay hidden"></div>
+
+  <!-- Toast Flutuante de Feedback -->
+  <div id="toastNotification" class="toast"></div>
+
+  <!-- Modal de Comprovante de Pedido Realizado -->
+  <div id="comprovanteModal" class="comprovante-modal hidden">
+    <div class="comprovante-card">
+      <div class="comprovante-header">
+        <span>🎉</span>
+        <h3>Pedido Confirmado com Sucesso!</h3>
+      </div>
+      <div id="comprovanteConteudo"></div>
+      <button type="button" id="btnFecharComprovante" class="btn-checkout-action" style="margin-top: 6px;">
+        Entendido & Fechar
+      </button>
+    </div>
+  </div>
+
+  <!-- Script Modular SPA -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+node_modules/
+.tmp/
+.temp_ag_kit/
+.env
+mcp-server.json
+.DS_Store
+Thumbs.db
